@@ -4,13 +4,7 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+BlockConnect, a dynamic Flutter demo application! Connect to the Sepolia blockchain effortlessly and experience seamless transactions on the testnet. Stay tuned for regular updates as we enhance and refine the app to bring you the latest features and improvements. Join us on this journey of innovation and discover the potential of blockchain technology. 💡🔗 #BlockConnect #FlutterDemo #SepoliaBlockchain #BlockchainTransactions #TestnetUpdate
 
-A few resources to get you started if this is your first Flutter project:
+https://github.com/chiragsahu/Blockconnect/assets/41544454/5ca69c8d-30ea-4099-ac38-2aec2ed315f7
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

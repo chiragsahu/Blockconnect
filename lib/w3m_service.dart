@@ -1,12 +1,27 @@
+import 'dart:ffi';
 import 'dart:math';
+import 'package:http/http.dart'; //You can also import the browser version
 
 import 'package:flutter/cupertino.dart';
 import 'package:metamask_connect/utils.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
+class CoinData {
+  double? remainingAmount;
+  double? gasFee;
+
+  CoinData({
+    this.remainingAmount,
+    this.gasFee,
+  });
+
+}
+
 class W3mConnector {
   late W3MService _w3mService;
-  final _amount = 0.001;
+  void Function(CoinData coinData) onWalletBalanceFetch;
+
+  W3mConnector(this.onWalletBalanceFetch);
 
   W3MService get service => _w3mService;
 
@@ -30,8 +45,8 @@ class W3mConnector {
     _w3mService.removeListener(func);
   }
 
-  Future<String?> onCreateTransaction() async {
-    double val = _amount * pow(10, 18).toDouble();
+  Future<String?> createTransaction({required String toAddress, required double tokenAmount}) async {
+    double val = tokenAmount * pow(10, 18).toDouble();
     final finalAmt = val.toInt().toRadixString(16);
     debugPrint("amount ${val.toInt().toRadixString(16)}");
 
@@ -44,16 +59,30 @@ class W3mConnector {
         params: [
           {
             "from": _w3mService.session?.address,
-            "to": "0x8491C4546977f98F01e7629Dd234882c17d1C86E",
+            "to": toAddress,
             "data": "0x",
-            // "gasPrice": "0x029104e28c",
-            // "gas": "0x5208",
             "value": finalAmt,
           }
         ],
       ),
     );
+    getWalletBalance();
     return hash;
+  }
+
+  Future getWalletBalance() async {
+    if(_w3mService.session!.address == null) {
+      return;
+    }
+    var apiUrl = "https://rpc.sepolia.org/";
+    var httpClient = Client();
+    var ethClient = Web3Client(apiUrl, httpClient);
+
+    EtherAmount balance = await ethClient.getBalance(EthereumAddress.fromHex(_w3mService.session!.address!, enforceEip55: true));
+    print("${balance.getValueInUnit(EtherUnit.ether)}");
+    final gasFee = (await ethClient.estimateGas()) / BigInt.from(10).pow(18);
+    onWalletBalanceFetch(CoinData(remainingAmount:  balance.getValueInUnit(EtherUnit.ether), gasFee: gasFee));
+    return ;
   }
 
   Future<String?> onPersonalSign() async {
@@ -66,6 +95,7 @@ class W3mConnector {
         params: ['Hello World!!', _w3mService.session?.address],
       ),
     );
+    getWalletBalance();
     return hash;
   }
 
@@ -87,6 +117,7 @@ class W3mConnector {
       featuredWalletIds: {Utils.metamaskId},
     );
     await _w3mService.init();
+    getWalletBalance();
   }
 
   disconnect() {

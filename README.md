@@ -1,4 +1,4 @@
-# metamask_connect
+# Blockconnect
 
 A new Flutter project.
 
